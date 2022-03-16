@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: A vpc with one private and public subnet each
+Metadata:
+Parameters:
+  VpcCIDR:
+    Default: 26.0.0.0/16
+    Description: Please enter the valid range of your vpc cidr
+    Type: String 
+  PublicSubnet:
+    Default: 26.0.1.0/24
+    Description: Please enter the valid range of your PublicSubnet
+    Type: String 
+  PrivateSubnet:
+    Default: 26.0.2.0/24
+    Description: Please enter the valid range of your PrivateSubnet
+    Type: String 
+  SSHLocation:
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+    Default: 0.0.0.0/0
+    Description: The IP address range that can be used to access the web server using SSH.
+    MaxLength: '18'
+    MinLength: '9'
+    Type: String
+Resources:
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties: 
+      CidrBlock: 
+        Ref: VpcCIDR 
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      InstanceTenancy: default
+      Tags: 
+        - Key: Name 
+          Value: Test VPC 
+  MyInternetGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: IW 
+  MyInternetGWAttach:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: 
+        Ref: MyInternetGW
+      VpcId: 
+        Ref: MyVPC
+  MyPublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn:Select:
+          - 0
+          - Fn::GetAzs: "" 
+      CidrBlock:
+        Ref: PublicSubnet
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: Public-subnet
+      VpcId:
+        Ref: MyVPC              
+    
+    
+
