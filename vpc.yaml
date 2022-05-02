@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: A VPC with one private and public subnet each
+Description: A vpc with one private and public subnet each
 Metadata:
 Parameters:
   VpcCIDR:
